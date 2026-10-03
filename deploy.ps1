@@ -1,4 +1,4 @@
-# deploy.ps1 —— 一键部署到 GitHub Pages（构建 → dist 同步到 docs/ → 推送 main）
+﻿# deploy.ps1 —— 一键部署到 GitHub Pages（构建 → dist 同步到 docs/ → 推送 main）
 # 用法：在本文件夹打开 PowerShell，运行  powershell -ExecutionPolicy Bypass -File .\deploy.ps1
 #       带说明提交：.\deploy.ps1 -Message "新增作品：xxx"
 # 原理：Pages 从 main 分支的 /docs 目录提供静态文件（Settings → Pages → Branch: main /docs）
