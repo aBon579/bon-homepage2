@@ -14,7 +14,7 @@
 | `src/App.jsx` | 全页固定视频背景 + 分类状态（分类卡 ↔ 作品集联动） |
 | `public/assets/` | `logo.webp`（左上头像）、`wechat-qr.jpg`（公众号二维码） |
 | `public/favicon.svg` | 标签页图标 |
-| `deploy.ps1` | 一键：构建 → 同步到 `docs/` → 提交推送 GitHub |
+| `deploy.ps1` / `双击部署.bat` | 一键：构建 → 同步到 `docs/` → 提交推送 GitHub（bat = 双击版；代理不通自动改直连重试） |
 | `admin.html` | 本地可视化编辑器：填表加作品 → 导出 works-data.js |
 | `index.html` | 页面标题（标签名）、字体、favicon 引用 |
 
@@ -55,6 +55,7 @@ npm run build    # 产物在 dist/
 4. 一两分钟后访问 `https://aBon579.github.io/bon-homepage2/`
 
 > 换了仓库名就把上面两处 `bon-homepage2` 一起改掉（URL 与 remote 同步变）。
+> 日常部署最省事的方式：**直接双击仓库里的 `双击部署.bat`**（自动带执行策略参数，结束停窗口显示结果）。
 
 ## 改标签名 / favicon
 
