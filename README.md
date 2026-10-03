@@ -15,9 +15,18 @@
 | `public/assets/` | `logo.webp`（左上头像）、`wechat-qr.jpg`（公众号二维码） |
 | `public/favicon.svg` | 标签页图标 |
 | `deploy.ps1` | 一键：构建 → 同步到 `docs/` → 提交推送 GitHub |
+| `admin.html` | 本地可视化编辑器：填表加作品 → 导出 works-data.js |
 | `index.html` | 页面标题（标签名）、字体、favicon 引用 |
 
 ## 日常维护（加作品）
+
+**方式一 · 可视化编辑器（推荐）**
+
+1. `npm run dev` → 打开 `http://localhost:5173/admin.html`（自动载入现有数据；直接双击 admin.html 也行，首次点「导入数据文件」）
+2. 填表新增/编辑 → 点 **下载 works-data.js** → 覆盖 `src\data\works-data.js`
+3. 运行 `.\deploy.ps1 -Message "新增作品：xxx"`，1~2 分钟线上生效
+
+**方式二 · 直接改数据**
 
 1. 编辑 `src/data/works-data.js`，按现有格式追加一条（title / link / desc / keywords / category）
 2. （可选）想换首页精选磁贴，把作品链接加进 `src/constants.js` 的 `FEATURED_LINKS`
