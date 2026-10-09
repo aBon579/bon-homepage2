@@ -4,6 +4,26 @@
  * ============================================================ */
 export const WORKS = [
   {
+    "title": "一个飞牛APP，把你的小爱音箱变成HomePod",
+    "link": "https://t.bilibili.com/1257165970165727236?share_source=pc_native",
+    "desc": "",
+    "keywords": [
+      "homepod",
+      "小爱音箱"
+    ],
+    "category": "视频"
+  },
+  {
+    "title": "一个飞牛APP，把你的小爱音箱变成HomePod",
+    "link": "https://mp.weixin.qq.com/s/Ih-fTerw-ZSr3XGgJE3BlA",
+    "desc": "",
+    "keywords": [
+      "小爱音箱",
+      "homepod"
+    ],
+    "category": "文章"
+  },
+  {
     "title": "一行命令，启动你的DeepSeek Harness",
     "link": "https://mp.weixin.qq.com/s/6QWz8tCL0quCtSSxZlKHxg",
     "desc": "一切皆插件",
