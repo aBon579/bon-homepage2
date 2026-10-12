@@ -4,6 +4,16 @@
  * ============================================================ */
 export const WORKS = [
   {
+    "title": "飞牛应用不知道哪里找？一个Moo给你聚合上百个应用源。",
+    "link": "https://mp.weixin.qq.com/s/w-S1O97S7xyY6IeJFZi1Mw",
+    "desc": "",
+    "keywords": [
+      "Moo",
+      "第三方应用商店"
+    ],
+    "category": "文章"
+  },
+  {
     "title": "一个飞牛APP，把你的小爱音箱变成HomePod",
     "link": "https://t.bilibili.com/1257165970165727236?share_source=pc_native",
     "desc": "",
