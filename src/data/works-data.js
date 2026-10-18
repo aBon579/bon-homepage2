@@ -6,7 +6,7 @@ export const WORKS = [
   {
     "title": "在家里弄个KTV？跟着我用飞牛NAS搭建你的家庭KTV！",
     "link": "https://t.bilibili.com/1258629832406728745?share_source=pc_native",
-    "desc": "",
+    "desc": "家庭KTV",
     "keywords": [
       "NAS",
       "KTV",
