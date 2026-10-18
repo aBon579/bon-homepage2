@@ -4,6 +4,28 @@
  * ============================================================ */
 export const WORKS = [
   {
+    "title": "在家里弄个KTV？跟着我用飞牛NAS搭建你的家庭KTV！",
+    "link": "https://t.bilibili.com/1258629832406728745?share_source=pc_native",
+    "desc": "",
+    "keywords": [
+      "NAS",
+      "KTV",
+      "骏耀"
+    ],
+    "category": "视频"
+  },
+  {
+    "title": "在家也能唱K？一起用飞牛NAS搭建家庭KTV吧！",
+    "link": "https://mp.weixin.qq.com/s/kqNLXC5vkaMdKmhPBGsbvg",
+    "desc": "",
+    "keywords": [
+      "NAS",
+      "KYV",
+      "骏耀"
+    ],
+    "category": "文章"
+  },
+  {
     "title": "飞牛应用不知道哪里找？一个Moo给你聚合上百个应用源。",
     "link": "https://mp.weixin.qq.com/s/w-S1O97S7xyY6IeJFZi1Mw",
     "desc": "",
