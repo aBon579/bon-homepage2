@@ -233,7 +233,8 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
       setBentoBatch((prev) => {
         const exclude = new Set(prev.map((w) => w.link));
         const pool = WORKS.filter((w) => !exclude.has(w.link));
-        // 排除后不足 5 条（数据池极小的兜底）：退回全池抽样
+        // 规则：排除当前5个后 ≥5 条可用 → 排除池随机抽 5 个
+        //       排除后不足 5 条（池总量 6~9 条的区间）→ 整个池随机挑 5 个
         return pool.length >= 5 ? sampleFive(pool) : sampleFive(WORKS);
       });
       setBentoKey((k) => k + 1); // key 变化 → 卡片重挂载重播错峰入场
