@@ -206,12 +206,18 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
       : meta.desc;
 
   // ── 便当盒轮换池：第 0 批 = 精选（开屏选品），之后全部作品按 5 条分批滚动 ──
+  // 尾批不足 5 条时从池头环形补齐 → 任何数量下所有作品（含新增）必进轮换
   const bentoBatches = useMemo(() => {
     const batches = [featuredWorks];
     for (let i = 0; i < WORKS.length; i += 5) {
-      batches.push(WORKS.slice(i, i + 5));
+      let b = WORKS.slice(i, i + 5);
+      if (b.length < 5) {
+        const need = 5 - b.length;
+        b = [...b, ...WORKS.slice(0, need)];
+      }
+      batches.push(b);
     }
-    // 去掉与精选完全相同的重复批（若分批恰好撞上）
+    // 过滤与精选完全重复的批
     return batches.filter(
       (b, i) =>
         b.length === 5 &&
