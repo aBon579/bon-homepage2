@@ -205,42 +205,41 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
       ? `关键词「${query.trim()}」的匹配作品${cat !== "全部" ? `（仅${cat}）` : ""}`
       : meta.desc;
 
-  // ── 便当盒轮换池：第 0 批 = 精选（开屏选品），之后全部作品按 5 条分批滚动 ──
-  // 尾批不足 5 条时从池头环形补齐 → 任何数量下所有作品（含新增）必进轮换
-  const bentoBatches = useMemo(() => {
-    const batches = [featuredWorks];
-    for (let i = 0; i < WORKS.length; i += 5) {
-      let b = WORKS.slice(i, i + 5);
-      if (b.length < 5) {
-        const need = 5 - b.length;
-        b = [...b, ...WORKS.slice(0, need)];
-      }
-      batches.push(b);
-    }
-    // 过滤与精选完全重复的批
-    return batches.filter(
-      (b, i) =>
-        b.length === 5 &&
-        (i === 0 || b.some((w) => !featuredSet.has(w.link)))
-    );
-  }, []);
-  const [bentoIndex, setBentoIndex] = useState(0);
+  // ── 便当盒轮换：随机抽样模式 ──
+  // 开屏第一批 = 精选（FEATURED_LINKS 选品）；之后每 15 秒从数据池
+  // （排除当前展示的 5 个）随机抓 5 个组成临时展示组 —— 无预定批次、
+  // 无尾批边界问题，任何数量下每条作品长期曝光均匀
+  const [bentoBatch, setBentoBatch] = useState(featuredWorks);
+  const [bentoKey, setBentoKey] = useState(0);
 
-  // 每 15 秒轮换一批便当盒（切走/卸载/ Reduced-motion 时不跑）
-  const bentoTick = useRef(0);
+  // Fisher-Yates 洗牌取前 5
+  function sampleFive(pool) {
+    const a = [...pool];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a.slice(0, 5);
+  }
+
   useEffect(() => {
     if (
-      bentoBatches.length <= 1 ||
+      WORKS.length <= 5 ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     )
       return;
     const id = window.setInterval(() => {
       if (document.hidden) return; // 页面不可见时暂停
-      bentoTick.current = (bentoTick.current + 1) % bentoBatches.length;
-      setBentoIndex(bentoTick.current);
+      setBentoBatch((prev) => {
+        const exclude = new Set(prev.map((w) => w.link));
+        const pool = WORKS.filter((w) => !exclude.has(w.link));
+        // 排除后不足 5 条（数据池极小的兜底）：退回全池抽样
+        return pool.length >= 5 ? sampleFive(pool) : sampleFive(WORKS);
+      });
+      setBentoKey((k) => k + 1); // key 变化 → 卡片重挂载重播错峰入场
     }, 15000);
     return () => window.clearInterval(id);
-  }, [bentoBatches.length]);
+  }, []);
 
   // 索引预览：数据走 state，位置走 DOM 直写（不触发重渲染）
   const onIndexMove = (e) => {
@@ -254,7 +253,6 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
     el.style.transform = `translate3d(${px}px, ${py}px, 0)`;
   };
 
-  const bentoBatch = bentoBatches[bentoIndex] || featuredWorks;
   const large = bentoBatch[0];
   const smalls = bentoBatch.slice(1);
   const LargeIcon = large
@@ -354,9 +352,9 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
         {/* ════════ 中性态/分类态：（中性含 Bento）→ 最近 6 → 完整索引 ════════ */}
         {mode !== "search" && (
           <>
-            {/* Bento 精选：1 大 + 4 小，每 15 秒轮换一批（key 触发重挂载 → 重播错峰入场） */}
+            {/* Bento 精选：1 大 + 4 小，每 15 秒随机抽 5 个（key 触发重挂载 → 重播错峰入场） */}
             {mode === "neutral" && (
-            <div key={bentoIndex} className="mt-8 grid auto-rows-[140px] grid-cols-2 gap-3 sm:auto-rows-[150px] sm:grid-cols-4 sm:gap-4">
+            <div key={bentoKey} className="mt-8 grid auto-rows-[140px] grid-cols-2 gap-3 sm:auto-rows-[150px] sm:grid-cols-4 sm:gap-4">
               {large && (
                 <a
                   key={large.link}
