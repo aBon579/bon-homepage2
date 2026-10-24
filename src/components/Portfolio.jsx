@@ -275,7 +275,7 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
 
   return (
     <section
-      id="WORKS_SORTED"
+      id="works"
       ref={sectionRef}
       className="relative w-full bg-black/30 backdrop-blur-xl"
     >
@@ -285,7 +285,7 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
           <div>
             <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-white/40">
               <MetaIcon className="h-3.5 w-3.5" />
-              WORKS_SORTED{cat !== "全部" ? ` / ${cat}` : ""}
+              Works{cat !== "全部" ? ` / ${cat}` : ""}
             </span>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
