@@ -1,33 +1,43 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, X, ArrowUpRight, Play, Newspaper } from "lucide-react";
+import { ChevronDown, Menu, X, ArrowUpRight, Play, Newspaper, Github } from "lucide-react";
 import {
   VIDEO_URL, // eslint-disable-line no-unused-vars -- 视频已提升至 App 全页背景
   LOGO_AVATAR,
   HEADLINE,
   WECHAT_QR,
+  GITHUB_URL,
   NAV_LINKS,
   DRAWER_LINKS,
 } from "../constants.js";
 import { WORKS } from "../data/works-data.js";
 
 /* 英雄区（修订版）：
-   - 左上：头像 logo + Bon；导航：首页/作品集/B站/公众号
+   - 左上：头像 logo + Bon；导航：首页/作品集/B站/GitHub/公众号（公众号最右）
    - 无黑色按钮、无邮箱输入框
    - 标题：个人频道文案
-   - 右下两玻璃卡 = 视频 / 文章 分类入口（点击滚到作品集并切分类） */
+   - 右下三玻璃卡 = 视频 / 文章 分类入口 + GitHub 外链卡 */
 
 const CATEGORY_CARDS = [
   {
     cat: "视频",
     icon: Play,
-    desc: "拆机、折腾与翻车，视频都发在 B 站。",
+    desc: "折腾、部署、教程，视频直观分享。",
     cta: "只看视频作品",
+    count: true,
   },
   {
     cat: "文章",
     icon: Newspaper,
     desc: "长文与教程沉淀在公众号，慢慢写、慢慢发。",
     cta: "只看文章作品",
+    count: true,
+  },
+  {
+    cat: "GitHub",
+    icon: Github,
+    desc: "许愿式编程，想法落地，代码开源。",
+    cta: "前往 GitHub",
+    link: GITHUB_URL,
   },
 ];
 
@@ -280,36 +290,53 @@ export default function Hero({ onCategory }) {
 
           {/* 右：视频 / 文章 分类卡 */}
           <div className="flex w-full flex-col gap-4 sm:flex-row lg:w-auto lg:gap-5">
-            {CATEGORY_CARDS.map(({ cat, icon: Icon, desc, cta }) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => onCategory(cat)}
-                className="group flex flex-1 flex-col rounded-2xl bg-white/10 p-5 text-left backdrop-blur-lg transition-colors hover:bg-white/[0.14] sm:w-64 sm:flex-none sm:p-6"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <Icon className="h-5 w-5 text-[#010101] lg:text-white" />
-                    <span className="text-sm font-semibold text-[#010101] lg:text-white">
-                      {cat}
+            {CATEGORY_CARDS.map(({ cat, icon: Icon, desc, cta, count, link }) => {
+              // 卡片公共结构：图标+标题 / 描述 / 底部 cta
+              const inner = (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Icon className="h-5 w-5 text-[#010101] lg:text-white" />
+                      <span className="text-sm font-semibold text-[#010101] lg:text-white">
+                        {cat}
+                      </span>
                     </span>
+                    {count && (
+                      <span
+                        className="text-2xl font-normal tracking-tight text-[#010101] lg:text-white"
+                        style={{ fontFamily: "'Silkscreen', cursive" }}
+                      >
+                        {catCount(cat)}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-[#010101]/70 lg:text-white/70">
+                    {desc}
+                  </p>
+                  <span className="mt-auto flex items-center gap-1 pt-4 text-xs font-medium text-[#010101]/60 lg:text-white/60">
+                    {cta}
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </span>
-                  <span
-                    className="text-2xl font-normal tracking-tight text-[#010101] lg:text-white"
-                    style={{ fontFamily: "'Silkscreen', cursive" }}
-                  >
-                    {catCount(cat)}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-[#010101]/70 sm:mt-4 lg:text-white/70">
-                  {desc}
-                </p>
-                <span className="mt-auto flex items-center gap-1 pt-4 text-xs font-medium text-[#010101]/60 lg:text-white/60">
-                  {cta}
-                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </span>
-              </button>
-            ))}
+                </>
+              );
+
+              const cls =
+                "group flex flex-1 flex-col rounded-2xl bg-white/10 p-5 text-left backdrop-blur-lg transition-colors hover:bg-white/[0.14] sm:w-48 sm:flex-none";
+
+              // GitHub 卡 = 外链；视频/文章卡 = 分类入口
+              if (link) {
+                return (
+                  <a key={cat} href={link} target="_blank" rel="noopener noreferrer" className={cls}>
+                    {inner}
+                  </a>
+                );
+              }
+              return (
+                <button key={cat} type="button" onClick={() => onCategory(cat)} className={cls}>
+                  {inner}
+                </button>
+              );
+            })}
           </div>
         </main>
       </div>

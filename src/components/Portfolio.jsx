@@ -205,6 +205,37 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
       ? `关键词「${query.trim()}」的匹配作品${cat !== "全部" ? `（仅${cat}）` : ""}`
       : meta.desc;
 
+  // ── 便当盒轮换池：第 0 批 = 精选（开屏选品），之后全部作品按 5 条分批滚动 ──
+  const bentoBatches = useMemo(() => {
+    const batches = [featuredWorks];
+    for (let i = 0; i < WORKS.length; i += 5) {
+      batches.push(WORKS.slice(i, i + 5));
+    }
+    // 去掉与精选完全相同的重复批（若分批恰好撞上）
+    return batches.filter(
+      (b, i) =>
+        b.length === 5 &&
+        (i === 0 || b.some((w) => !featuredSet.has(w.link)))
+    );
+  }, []);
+  const [bentoIndex, setBentoIndex] = useState(0);
+
+  // 每 15 秒轮换一批便当盒（切走/卸载/ Reduced-motion 时不跑）
+  const bentoTick = useRef(0);
+  useEffect(() => {
+    if (
+      bentoBatches.length <= 1 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const id = window.setInterval(() => {
+      if (document.hidden) return; // 页面不可见时暂停
+      bentoTick.current = (bentoTick.current + 1) % bentoBatches.length;
+      setBentoIndex(bentoTick.current);
+    }, 15000);
+    return () => window.clearInterval(id);
+  }, [bentoBatches.length]);
+
   // 索引预览：数据走 state，位置走 DOM 直写（不触发重渲染）
   const onIndexMove = (e) => {
     const el = previewRef.current;
@@ -217,8 +248,9 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
     el.style.transform = `translate3d(${px}px, ${py}px, 0)`;
   };
 
-  const large = featuredWorks[0];
-  const smalls = featuredWorks.slice(1);
+  const bentoBatch = bentoBatches[bentoIndex] || featuredWorks;
+  const large = bentoBatch[0];
+  const smalls = bentoBatch.slice(1);
   const LargeIcon = large
     ? large.category === "视频"
       ? Play
@@ -316,9 +348,9 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
         {/* ════════ 中性态/分类态：（中性含 Bento）→ 最近 6 → 完整索引 ════════ */}
         {mode !== "search" && (
           <>
-            {/* Bento 精选：1 大 + 4 小，生成式视觉，页高恒定（仅中性态） */}
+            {/* Bento 精选：1 大 + 4 小，每 15 秒轮换一批（key 触发重挂载 → 重播错峰入场） */}
             {mode === "neutral" && (
-            <div className="mt-8 grid auto-rows-[140px] grid-cols-2 gap-3 sm:auto-rows-[150px] sm:grid-cols-4 sm:gap-4">
+            <div key={bentoIndex} className="mt-8 grid auto-rows-[140px] grid-cols-2 gap-3 sm:auto-rows-[150px] sm:grid-cols-4 sm:gap-4">
               {large && (
                 <a
                   key={large.link}

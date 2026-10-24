@@ -13,17 +13,19 @@ export const DARK_GRADIENT = {
 };
 
 export const BILI_URL = "https://space.bilibili.com/277640994";
+export const GITHUB_URL = "https://github.com/aBon579";
 export const WECHAT_QR = "assets/wechat-qr.jpg";
 export const LOGO_AVATAR = "assets/logo.webp";
 
 // 个人频道标题（替代原英文 headline）
 export const HEADLINE = "Build, tinker, and make tech work.";
 
-// 桌面玻璃胶囊导航：首页 / 作品集 / B站 / 公众号（公众号在 B站右边，带 ChevronDown）
+// 桌面玻璃胶囊导航：首页 / 作品集 / B站 / GitHub / 公众号（公众号保持最右侧）
 export const NAV_LINKS = [
   { key: "top", label: "首页", href: "#top" },
   { key: "works", label: "作品集", href: "#works" },
   { key: "bili", label: "B站", href: BILI_URL, external: true },
+  { key: "github", label: "GitHub", href: GITHUB_URL, external: true },
   { key: "wechat", label: "公众号", href: "#", wechat: true },
 ];
 
@@ -38,4 +40,4 @@ export const FEATURED_LINKS = [
   "https://mp.weixin.qq.com/s/C8OkUGgSYd7HyZU7oLzOog", // NAS管家计划篇一
 ];
 
-export const FOOTER_COPY = "© 2026 Bon · 作品集 · B站 · 公众号";
+export const FOOTER_COPY = "© 2026 Bon · GitHub · B站 · 公众号";
