@@ -339,6 +339,19 @@ export default function Hero({ onCategory }) {
             })}
           </div>
         </main>
+        {/* ── 底部中央：跳动的作品集引导箭头（游戏感：残影拖尾 + 光晕呼吸 + 故障抖动） ── */}
+        <a
+          href="#works"
+          aria-label="前往作品集"
+          className="scroll-cue group"
+        >
+          <span aria-hidden="true" className="cue-halo" />
+          <span aria-hidden="true" className="cue-stack">
+            <ChevronDown className="cue-ghost cue-ghost-a" strokeWidth={2.5} />
+            <ChevronDown className="cue-ghost cue-ghost-b" strokeWidth={2.5} />
+            <ChevronDown className="cue-main" strokeWidth={2.5} />
+          </span>
+        </a>
       </div>
     </section>
   );

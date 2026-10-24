@@ -37,3 +37,155 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ============================================================
+   底部中央作品集引导箭头（游戏感：残影拖尾 + 光晕呼吸 + 故障抖动）
+   ============================================================ */
+.scroll-cue {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 44px;
+  cursor: pointer;
+  border-radius: 999px;
+  outline: none;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 1024px) {
+  .scroll-cue {
+    bottom: 1.25rem;
+    width: 68px;
+    height: 52px;
+  }
+}
+
+/* 光晕层：径向白光，大小与透明度乱序呼吸（非匀速） */
+.cue-halo {
+  position: absolute;
+  inset: -26px -30px;
+  border-radius: 999px;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.28) 45%,
+    rgba(255, 255, 255, 0.08) 70%,
+    transparent
+  );
+  filter: blur(10px);
+  animation: cue-halo 1.9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 箭头组：弹跳 + 偶发横向故障抖动，两个动画叠加 */
+.cue-stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -14px;
+  animation:
+    cue-bounce 1.6s cubic-bezier(0.3, 0, 0.4, 1) infinite,
+    cue-glitch 3.8s steps(1, end) infinite;
+}
+
+/* 每一层箭头错开垂直位置 → 双 chevron 堆叠形 */
+.cue-stack > svg {
+  width: 26px;
+  height: 26px;
+  margin-top: -14px;
+}
+
+@media (min-width: 1024px) {
+  .cue-stack > svg {
+    width: 30px;
+    height: 30px;
+    margin-top: -16px;
+  }
+}
+
+/* 主箭头：纯白 + 白色辉光 */
+.cue-main {
+  position: relative;
+  color: #fff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 18px rgba(255, 255, 255, 0.45));
+}
+
+/* 残影层：模糊 + 错位 + 相位差（负延迟产生拖影跟随感） */
+.cue-ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.cue-ghost-a {
+  color: rgba(255, 255, 255, 0.45);
+  filter: blur(2.5px);
+  transform: translate(-3px, -2px);
+  animation: cue-bounce 1.6s cubic-bezier(0.3, 0, 0.4, 1) infinite;
+  animation-delay: -0.09s;
+}
+
+.cue-ghost-b {
+  color: rgba(255, 255, 255, 0.22);
+  filter: blur(4.5px);
+  transform: translate(3px, -4px);
+  animation: cue-bounce 1.6s cubic-bezier(0.3, 0, 0.4, 1) infinite;
+  animation-delay: -0.18s;
+}
+
+/* 非匀速弹跳：预压 → 高弹 → 二次回弹（游戏角色的 squash & stretch） */
+@keyframes cue-bounce {
+  0%, 100% { transform: translateY(0); }
+  14% { transform: translateY(2px); }
+  42% { transform: translateY(-7px); }
+  58% { transform: translateY(-2px); }
+  74% { transform: translateY(-4px); }
+  88% { transform: translateY(-1px); }
+}
+
+/* 光晕乱序呼吸：不对称缩放节奏 */
+@keyframes cue-halo {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  30% { opacity: 0.6; transform: scale(1.18); }
+  46% { opacity: 0.42; transform: scale(0.92); }
+  68% { opacity: 0.72; transform: scale(1.3); }
+  84% { opacity: 0.5; transform: scale(1.05); }
+}
+
+/* 低频故障：长时间正常，瞬时横抖 + 倾斜（steps 让抖动干脆不拖泥） */
+@keyframes cue-glitch {
+  0%, 82%, 100% { transform: translate(0, 0) skewX(0deg); }
+  84% { transform: translate(-3px, 1px) skewX(10deg); }
+  87% { transform: translate(3px, -1px) skewX(-8deg); }
+  90% { transform: translate(-2px, 0) skewX(5deg); }
+  93% { transform: translate(0, 0) skewX(0deg); }
+  95% { transform: translate(2px, 0) skewX(-4deg); }
+}
+
+/* 键盘可达性 */
+.scroll-cue:focus-visible .cue-stack {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1));
+}
+
+/* 减少动效偏好：停掉一切跳动，保留静态可点 */
+@media (prefers-reduced-motion: reduce) {
+  .cue-stack,
+  .cue-ghost-a,
+  .cue-ghost-b {
+    animation: none;
+  }
+  .cue-halo {
+    animation: none;
+    opacity: 0.4;
+  }
+}
