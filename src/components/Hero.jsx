@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, X, ArrowUpRight, Play, Newspaper, Github } from "lucide-react";
+import { ChevronDown, ChevronUp, Menu, X, ArrowUpRight, Play, Newspaper, Github } from "lucide-react";
 import {
   VIDEO_URL, // eslint-disable-line no-unused-vars -- 视频已提升至 App 全页背景
   LOGO_AVATAR,
@@ -347,9 +347,9 @@ export default function Hero({ onCategory }) {
         >
           <span aria-hidden="true" className="cue-halo" />
           <span aria-hidden="true" className="cue-stack">
-            <ChevronDown className="cue-ghost cue-ghost-a" strokeWidth={2.5} />
-            <ChevronDown className="cue-ghost cue-ghost-b" strokeWidth={2.5} />
-            <ChevronDown className="cue-main" strokeWidth={2.5} />
+            <ChevronUp className="cue-ghost cue-ghost-a" strokeWidth={2.5} />
+            <ChevronUp className="cue-ghost cue-ghost-b" strokeWidth={2.5} />
+            <ChevronUp className="cue-main" strokeWidth={2.5} />
           </span>
         </a>
       </div>

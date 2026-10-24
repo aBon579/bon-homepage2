@@ -88,26 +88,25 @@ body {
 .cue-stack {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   align-items: center;
-  margin-top: -14px;
   animation:
     cue-bounce 1.6s cubic-bezier(0.3, 0, 0.4, 1) infinite,
     cue-glitch 3.8s steps(1, end) infinite;
 }
 
-/* 每一层箭头错开垂直位置 → 双 chevron 堆叠形 */
+/* 每一层箭头错开垂直位置 → 双 chevron 向上堆叠形（⌃⌃） */
 .cue-stack > svg {
   width: 26px;
   height: 26px;
-  margin-top: -14px;
+  margin-bottom: -14px;
 }
 
 @media (min-width: 1024px) {
   .cue-stack > svg {
     width: 30px;
     height: 30px;
-    margin-top: -16px;
+    margin-bottom: -16px;
   }
 }
 
@@ -119,7 +118,7 @@ body {
     drop-shadow(0 0 18px rgba(255, 255, 255, 0.45));
 }
 
-/* 残影层：模糊 + 错位 + 相位差（负延迟产生拖影跟随感） */
+/* 残影层：模糊 + 错位（向下拖尾）+ 相位差（负延迟产生跟随感） */
 .cue-ghost {
   position: absolute;
   top: 0;
@@ -130,7 +129,7 @@ body {
 .cue-ghost-a {
   color: rgba(255, 255, 255, 0.45);
   filter: blur(2.5px);
-  transform: translate(-3px, -2px);
+  transform: translate(-3px, 2px);
   animation: cue-bounce 1.6s cubic-bezier(0.3, 0, 0.4, 1) infinite;
   animation-delay: -0.09s;
 }
@@ -138,7 +137,7 @@ body {
 .cue-ghost-b {
   color: rgba(255, 255, 255, 0.22);
   filter: blur(4.5px);
-  transform: translate(3px, -4px);
+  transform: translate(3px, 4px);
   animation: cue-bounce 1.6s cubic-bezier(0.3, 0, 0.4, 1) infinite;
   animation-delay: -0.18s;
 }
