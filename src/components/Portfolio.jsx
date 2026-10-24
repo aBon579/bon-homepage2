@@ -18,6 +18,17 @@ import { DARK_GRADIENT, FEATURED_LINKS } from "../constants.js";
 
 const CATEGORIES = ["全部", "视频", "文章"];
 
+// 全量作品：显式按发布日期倒序（无 date 的排最后）——
+// “最近更新”依赖此排序，不再信任文件顺序
+const WORKS_SORTED = [...WORKS].sort((a, b) => {
+  const da = (a && a.date) || "";
+  const db = (b && b.date) || "";
+  if (da === db) return 0;
+  if (!da) return 1;
+  if (!db) return -1;
+  return db.localeCompare(da);
+});
+
 const CAT_META = {
   全部: {
     title: "我的作品集",
@@ -38,7 +49,7 @@ const CAT_META = {
 
 // ── 精选与最近（模块级派生一次）──
 const featuredWorks = FEATURED_LINKS.map((l) =>
-  WORKS.find((w) => w.link === l)
+  WORKS_SORTED.find((w) => w.link === l)
 ).filter(Boolean);
 const featuredSet = new Set(featuredWorks.map((w) => w.link));
 
@@ -177,25 +188,25 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
 
   const filtered = useMemo(
     () =>
-      WORKS.filter(
+      WORKS_SORTED.filter(
         (w) => (cat === "全部" || w.category === cat) && matches(w, tokens)
       ),
     [tokens, cat]
   );
 
   const catCount = (c) =>
-    c === "全部" ? WORKS.length : WORKS.filter((w) => w.category === c).length;
+    c === "全部" ? WORKS_SORTED.length : WORKS_SORTED.filter((w) => w.category === c).length;
 
   // 三态：neutral（全部）/ category（视频·文章）/ search
   const mode =
     tokens.length > 0 ? "search" : cat === "全部" ? "neutral" : "category";
   // 当前视图的作品范围（分类态 = 该分类，其余 = 全部）
   const scopeWorks =
-    cat === "全部" ? WORKS : WORKS.filter((w) => w.category === cat);
+    cat === "全部" ? WORKS_SORTED : WORKS_SORTED.filter((w) => w.category === cat);
   // 最近更新：中性态排除精选防重复，恒取 6 条
   const recentWorks =
     mode === "neutral"
-      ? WORKS.filter((w) => !featuredSet.has(w.link)).slice(0, 6)
+      ? WORKS_SORTED.filter((w) => !featuredSet.has(w.link)).slice(0, 6)
       : scopeWorks.slice(0, 6);
   const meta = CAT_META[cat] || CAT_META["全部"];
   const MetaIcon = meta.Icon;
@@ -224,7 +235,7 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
 
   useEffect(() => {
     if (
-      WORKS.length <= 5 ||
+      WORKS_SORTED.length <= 5 ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     )
       return;
@@ -232,10 +243,10 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
       if (document.hidden) return; // 页面不可见时暂停
       setBentoBatch((prev) => {
         const exclude = new Set(prev.map((w) => w.link));
-        const pool = WORKS.filter((w) => !exclude.has(w.link));
+        const pool = WORKS_SORTED.filter((w) => !exclude.has(w.link));
         // 规则：排除当前5个后 ≥5 条可用 → 排除池随机抽 5 个
         //       排除后不足 5 条（池总量 6~9 条的区间）→ 整个池随机挑 5 个
-        return pool.length >= 5 ? sampleFive(pool) : sampleFive(WORKS);
+        return pool.length >= 5 ? sampleFive(pool) : sampleFive(WORKS_SORTED);
       });
       setBentoKey((k) => k + 1); // key 变化 → 卡片重挂载重播错峰入场
     }, 15000);
@@ -264,7 +275,7 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
 
   return (
     <section
-      id="works"
+      id="WORKS_SORTED"
       ref={sectionRef}
       className="relative w-full bg-black/30 backdrop-blur-xl"
     >
@@ -274,7 +285,7 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
           <div>
             <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-white/40">
               <MetaIcon className="h-3.5 w-3.5" />
-              Works{cat !== "全部" ? ` / ${cat}` : ""}
+              WORKS_SORTED{cat !== "全部" ? ` / ${cat}` : ""}
             </span>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
@@ -297,10 +308,10 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl tracking-tight text-white" style={silkscreen}>
-              {mode === "neutral" ? WORKS.length : filtered.length}
+              {mode === "neutral" ? WORKS_SORTED.length : filtered.length}
             </span>
             <span className="text-sm text-white/50">
-              件作品{mode !== "neutral" && filtered.length !== WORKS.length ? ` · 共 ${WORKS.length} 件` : ""}
+              件作品{mode !== "neutral" && filtered.length !== WORKS_SORTED.length ? ` · 共 ${WORKS_SORTED.length} 件` : ""}
             </span>
           </div>
         </div>
@@ -558,7 +569,7 @@ export default function Portfolio({ cat, setCat, query, setQuery }) {
                           className="w-7 shrink-0 text-right text-xs text-white/35"
                           style={silkscreen}
                         >
-                          {String(WORKS.indexOf(w) + 1).padStart(2, "0")}
+                          {String(WORKS_SORTED.indexOf(w) + 1).padStart(2, "0")}
                         </span>
                         <span className="min-w-0 flex-1 truncate text-sm font-medium text-white/85 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white sm:text-base">
                           {w.title}

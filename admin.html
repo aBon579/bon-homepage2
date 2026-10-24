@@ -211,6 +211,8 @@
       <input type="url" id="fLink" placeholder="https://mp.weixin.qq.com/s/... 或 https://t.bilibili.com/..." />
       <label>简介（一句话，会显示在卡片上）</label>
       <textarea id="fDesc" maxlength="60" placeholder="一句话说清这个作品是什么"></textarea>
+      <label>发布日期（可选，YYYY-MM-DD；影响“最近更新”排序）</label>
+      <input type="date" id="fDate" />
       <label>关键词（最多 5 个，用逗号或空格分开）</label>
       <input type="text" id="fKeywords" placeholder="NAS, 音乐, TV" />
       <div class="chips" id="kwChips"></div>
@@ -352,6 +354,7 @@
     $("#fTitle").value = w.title;
     $("#fLink").value = w.link;
     $("#fDesc").value = w.desc;
+    $("#fDate").value = w.date || "";
     $("#fKeywords").value = w.keywords.join(", ");
     document.querySelector('input[name="cat"][value="' + w.category + '"]').checked = true;
     updateCnt();
@@ -366,6 +369,7 @@
     $("#fTitle").value = "";
     $("#fLink").value = "";
     $("#fDesc").value = "";
+    $("#fDate").value = "";
     $("#fKeywords").value = "";
     document.querySelector('input[name="cat"][value="文章"]').checked = true;
     updateCnt();
@@ -418,6 +422,7 @@
     var title = $("#fTitle").value.trim();
     var link = $("#fLink").value.trim();
     var desc = $("#fDesc").value.trim();
+    var date = $("#fDate").value.trim(); // type=date 自带 YYYY-MM-DD 格式校验
     var kws = keywordsOf($("#fKeywords").value);
     var cat = document.querySelector('input[name="cat"]:checked').value;
 
@@ -426,7 +431,7 @@
     if (link && !/^https?:\/\/.+/i.test(link)) { toast("链接要以 http(s):// 开头"); $("#fLink").focus(); return; }
     if (CATS.indexOf(cat) < 0) { toast("类别只能是 文章 或 视频"); return; }
 
-    var entry = { title: title, link: link, desc: desc, keywords: kws, category: cat };
+    var entry = { title: title, link: link, desc: desc, date: date, keywords: kws, category: cat };
     if (editing >= 0) state[editing] = entry;
     else state.unshift(entry); // 新条目插到最前：最近更新取前 6 条
     saveDraft();
@@ -439,6 +444,7 @@
       "/* ============================================================",
       " * works-data.js —— 作品集数据（由 admin.html 导出或手改）",
       " * title≤30字 | link 链接 | desc 简介 | keywords ≤5 | category: 文章/视频",
+      " * date 为发布日期(YYYY-MM-DD)，可选；展示按 date 倒序",
       " * ============================================================ */",
       "export const WORKS = " + JSON.stringify(state, null, 2) + ";",
       ""
@@ -473,7 +479,7 @@
     } else fallback();
   });
 
-  // ---- 导入：解析 export const WORKS = [...] 格式 ----
+  // ---- 导入：解析 export const WORKS = [...] / window.WORKS = [...] 格式 ----
   function parseWorks(text) {
     var i = text.indexOf("WORKS");
     if (i < 0) throw new Error("找不到 WORKS");
@@ -488,6 +494,7 @@
           title: String(w.title).slice(0, 30),
           link: String(w.link || ""),
           desc: String(w.desc || ""),
+          date: /^\d{4}-\d{2}-\d{2}$/.test(String(w.date || "")) ? String(w.date) : "",
           keywords: (Array.isArray(w.keywords) ? w.keywords : []).map(String).slice(0, 5),
           category: w.category === "视频" ? "视频" : "文章"
         };
